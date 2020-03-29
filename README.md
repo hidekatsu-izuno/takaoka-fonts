@@ -19,9 +19,21 @@ Takaoka フォントは、IPA フォントの派生としてコミュニティ�
 を動かすと、Takao フォントを取得して dest 以下に修正後のフォントファイルを出力します。
 
 ```python
-pip install fonttools
+pip install -r requirements.txt
 python ./build.py
 ```
+
+# Development
+
+fonttools をライブラリとして使う方法についてはほとんどドキュメントがありませんが、
+[ttlib の APIドキュメント](https://rsms.me/fonttools-docs/ttLib/index.html) から
+ソースコードが辿って読むのが一番簡単です。
+
+低解像度用のヒントについては、
+- 置き換えた 0 のフォントのヒントを生成する方法がわからなかった
+- 最近のディスプレイは十分高解像度であり MacOS ではもはやヒントを無視する
+- PDF の埋め込み用途である
+ことから一律削除しましたが、生成方法がわかれば対応するかもしれません。
 
 # License
 

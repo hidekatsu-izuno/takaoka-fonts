@@ -1,12 +1,14 @@
 import os
 import urllib.request
 import tarfile
+import zipfile
 import re
 from fontTools.ttLib import TTFont
 from fontTools.pens.ttGlyphPen import TTGlyphPen
 
-srcDir = "build/fonts"
-destDir = "dest"
+srcDir = "build/base"
+destDir = "build/dest"
+releaseDir = "build/release"
 takaoFontUrl = "https://launchpad.net/takao-fonts/trunk/15.03/+download/TakaoFonts_00303.01.tar.xz"
 
 def downloadTakaoFonts():
@@ -17,11 +19,11 @@ def downloadTakaoFonts():
         archiveName = f"{srcDir}/TakaoFonts.tar.xz"
         urllib.request.urlretrieve(takaoFontUrl, archiveName)
 
-        with tarfile.open(archiveName) as archive:
-            for member in archive.getmembers():
+        with tarfile.open(archiveName) as tf:
+            for member in tf.getmembers():
                 m = re.fullmatch(r"[^/]*/(Takao(?:Gothic|Mincho).ttf)", member.name)
                 if m:
-                    with archive.extractfile(member) as reader:
+                    with tf.extractfile(member) as reader:
                         with open(f"{srcDir}/{m.group(1)}", "wb") as writer:
                             writer.write(reader.read())
         
@@ -86,10 +88,16 @@ def generateFont(font, fontFile):
     destFontFile = re.sub(r"Takao", r"Takaoka", fontFile)
     font.save(f"{destDir}/{destFontFile}")
 
+def createRelease():
+    os.makedirs(releaseDir, exist_ok = True)
+    with zipfile.ZipFile(f"{releaseDir}/TakaokaFonts.zip", "w", zipfile.ZIP_DEFLATED) as zf:
+        for filename in os.listdir(destDir):
+            zf.write(f"{destDir}/{filename}", filename)
+
 if __name__ == "__main__":
     downloadTakaoFonts()
 
-    fontFiles = [filename for filename in os.listdir(srcDir) if re.search(r'\.ttf', filename)]
+    fontFiles = [filename for filename in os.listdir(srcDir) if re.search(r"\.ttf", filename)]
     for fontFile in fontFiles:
         font = TTFont(f"{srcDir}/{fontFile}")
         replaceNameRecord(font, fontFile)
@@ -97,3 +105,5 @@ if __name__ == "__main__":
         del font["cvt "]
         del font["fpgm"]
         generateFont(font, fontFile)
+    
+    createRelease()
