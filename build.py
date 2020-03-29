@@ -94,6 +94,8 @@ def createRelease():
         for filename in os.listdir(destDir):
             zf.write(f"{destDir}/{filename}", filename)
 
+        zf.write("IPA_Font_License_Agreement_v1.0.txt", "LICENSE")
+
 if __name__ == "__main__":
     downloadTakaoFonts()
 
