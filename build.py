@@ -26,7 +26,7 @@ def downloadTakaoFonts():
                     with tf.extractfile(member) as reader:
                         with open(f"{srcDir}/{m.group(1)}", "wb") as writer:
                             writer.write(reader.read())
-        
+
         os.remove(archiveName)
 
 def replaceNameRecord(font, fontFile):
@@ -34,24 +34,24 @@ def replaceNameRecord(font, fontFile):
     for name in nameTable.names:
         if name.nameID == 0:
             nameTable.setName(
-                re.sub(r"You must accept", r"Copyright (c) Hidekatsu Izuno, 2020. \0", name.toUnicode()), 
-                name.nameID, 
+                re.sub(r"You must accept", r"Copyright (c) Hidekatsu Izuno, 2020. \0", name.toUnicode()),
+                name.nameID,
                 name.platformID,
                 name.platEncID,
                 name.langID
             )
         elif name.nameID in (1, 3, 4, 6):
             nameTable.setName(
-                re.sub(r"Takao", r"Takaoka", name.toUnicode()), 
-                name.nameID, 
+                re.sub(r"Takao", r"Takaoka", name.toUnicode()),
+                name.nameID,
                 name.platformID,
                 name.platEncID,
                 name.langID
             )
         elif name.nameID == 11:
             nameTable.setName(
-                "https://github.com/hidekatsu-izuno/takaoka-fonts", 
-                name.nameID, 
+                "https://github.com/hidekatsu-izuno/takaoka-fonts",
+                name.nameID,
                 name.platformID,
                 name.platEncID,
                 name.langID
@@ -105,5 +105,5 @@ if __name__ == "__main__":
         del font["cvt "]
         del font["fpgm"]
         generateFont(font, fontFile)
-    
+
     createRelease()
